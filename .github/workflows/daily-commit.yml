@@ -2,7 +2,7 @@ name: Daily Commit
 
 on:
   schedule:
-    - cron: "0 9 * * *"   # Roz 9 bajey morning par chalega (UTC time hota hai)
+    - cron: "0 9 * * *"   # Roz 9 bajey morning (UTC time)
   workflow_dispatch:       # Manual run button bhi hoga
 
 jobs:
@@ -17,12 +17,21 @@ jobs:
           git config --global user.name "AREEBA-FATIMA"
           git config --global user.email "areebafatima2457@gmail.com"
 
-      - name: Make a commit
+      - name: Make random number of commits
         run: |
-          echo "Auto update on $(date)" >> log.txt
-          git add .
+          # Random commit count between 1 and 10
+          COMMITS=$(( (RANDOM % 10) + 1 ))
+          echo "🌀 Making $COMMITS commits today..."
 
-          # Random commit messages
-          COMMIT_MSGS=("update: project dependencies" "fix: minor bug" "docs: updated README" "refactor: code improvements" "chore: daily maintenance")
-          git commit -m "${COMMIT_MSGS[$RANDOM % ${#COMMIT_MSGS[@]}]}"
+          COMMIT_MSGS=("update: project dependencies" "fix: minor bug" "docs: updated README" "refactor: code improvements" "chore: daily maintenance" "feat: new enhancement" "style: formatting update" "test: minor test tweak")
+
+          for ((i=1; i<=COMMITS; i++))
+          do
+            echo "Auto update $i on $(date)" >> log.txt
+            git add log.txt
+            MSG=${COMMIT_MSGS[$RANDOM % ${#COMMIT_MSGS[@]}]}
+            git commit -m "$MSG"
+            sleep 2  # thoda gap daal do natural lagne ke liye
+          done
+
           git push
