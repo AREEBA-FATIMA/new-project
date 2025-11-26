@@ -17,9 +17,15 @@ jobs:
           git config --global user.name "AREEBA-FATIMA"
           git config --global user.email "areebafatima2457@gmail.com"
 
-      - name: Make random number of commits
+      - name: Decide whether to skip today
         run: |
-          # Random commit count between 1 and 10
+          # Random number 0 ya 1; 1 matlab commit karenge, 0 matlab skip
+          SKIP=$(( RANDOM % 7 ))
+          echo "SKIP=$SKIP" >> $GITHUB_ENV
+
+      - name: Make random number of commits
+        if: env.SKIP != '0'   # Agar SKIP=0 to workflow yahan ruk jayega
+        run: |
           COMMITS=$(( (RANDOM % 10) + 1 ))
           echo "🌀 Making $COMMITS commits today..."
 
@@ -31,7 +37,7 @@ jobs:
             git add log.txt
             MSG=${COMMIT_MSGS[$RANDOM % ${#COMMIT_MSGS[@]}]}
             git commit -m "$MSG"
-            sleep 2  # thoda gap daal do natural lagne ke liye
+            sleep 2
           done
 
           git push
